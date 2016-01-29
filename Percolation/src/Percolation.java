@@ -37,8 +37,8 @@ public class Percolation {
         for (int y = 1; y <= N; y++) {
             for (int x = 1; x <= N; x++) {
                 n = convert(x, y);
-                map[n] = 0;
-//                map[n] = StdRandom.uniform(2);
+//                map[n] = 0;
+                map[n] = StdRandom.uniform(2);
             }
         }
     }
