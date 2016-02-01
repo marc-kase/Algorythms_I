@@ -18,34 +18,36 @@ public class PercolationTest {
         return p;
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void handyTest() {
         System.out.println("Handy Test...");
 
-        PercolationDecor p = new PercolationDecor(4);
+        PercolationDecor p = new PercolationDecor(3);
         System.out.println(p.toString());
         System.out.println();
 
-        System.out.println();
+        System.out.println(p.isOpen(1,1));
+
+/*        System.out.println();
         p.open(1, 4);
         System.out.println(p.toString());
         System.out.println("Full: " + p.isFull(1,4));
-        System.out.println("Percolates: " + p.percolates());
+        System.out.println("Percolates: " + p.percolates());*/
 
-        p.open(1, 1);
+        p.open(3, 1);
         System.out.println(p.toString());
         System.out.println("Full: " + p.isFull(1,1));
-        System.out.println("Percolates: " + p.percolates());
+//        System.out.println("Percolates: " + p.percolates());
 
         System.out.println();
-        p.open(1, 2);
+        p.open(3, 2);
         System.out.println(p.toString());
         System.out.println("Full: " + p.isFull(1,2));
-        System.out.println("Percolates: " + p.percolates());
+//        System.out.println("Percolates: " + p.percolates());
 
         System.out.println();
-        p.open(1, 3);
+        p.open(3, 3);
         System.out.println(p.toString());
         System.out.println("Full: " + p.isFull(1,3));
         System.out.println("Percolates: " + p.percolates());
@@ -63,15 +65,15 @@ public class PercolationTest {
         System.out.println(p.toString());
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void multitest() {
         int n = 5;
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 6; i++) {
             n *= i;
             System.out.print(n + "; ");
             PercolationDecor p = percolateIt(n);
-            System.out.println(p.time + "; " + p.getThreashold());
+//            System.out.println(p.time + "; " + p.getThreashold());
         }
 
 

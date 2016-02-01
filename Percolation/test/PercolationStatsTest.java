@@ -9,7 +9,7 @@ public class PercolationStatsTest {
 
     @Test
     public void handyTest() {
-        PercolationStatsDecor p = new PercolationStatsDecor(200, 10);
+        PercolationStatsDecor p = new PercolationStatsDecor(64, 150);
         System.out.println(p.toString());
     }
 }
