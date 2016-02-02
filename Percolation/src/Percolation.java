@@ -1,72 +1,93 @@
-import edu.princeton.cs.algs4.QuickFindUF;
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    public enum Status {
+    private enum Status {
         CLOSED, OPENED
     }
 
-    protected final int N;
-    protected final int V;
-    protected final int virtTop;
-    protected final int virtBot;
-    protected int openSites = 0;
-    protected int[] map;
-    private QuickFindUF qf;
+    private final int num;
+    private final int virtTop;
+    private final int virtBot;
+    private int lastLineStart;
+    private int[] borderShiftX = {0, 1, 0, -1};
+    private int[] borderShiftY = {-1, 0, 1, 0};
+    private int[] map;
+    private int[] botm;
+    private WeightedQuickUnionUF qf;
 
-    static {
-        StdRandom.setSeed(10000L);
-    }
 
     // create N-by-N grid, with all sites blocked
     public Percolation(int N) {
         if (N <= 0) throw new java.lang.IllegalArgumentException();
 
-        this.N = N;
-        V = N * N;
-        virtTop = V;
-        virtBot = V + 1;
+        this.num = N;
+        int v = N * N;
+        virtTop = v;
+        virtBot = v + 1;
+        lastLineStart = v - N - 1;
 
-        map = new int[V];
-        qf = new QuickFindUF(V + 2);
-        init(N);
+        map = new int[v];
+        botm = new int[v];
+        qf = new WeightedQuickUnionUF(v + 2);
+        init(num);
     }
 
-    private void init(int N) {
+    private void init(int numN) {
+        StdRandom.setSeed(10000L);
+
         int n;
-        for (int y = 1; y <= N; y++) {
-            for (int x = 1; x <= N; x++) {
-                n = convert(x, y);
-//                map[n] = 0;
-                map[n] = StdRandom.uniform(2);
+        for (int y = 1; y <= numN; y++) {
+            for (int x = 1; x <= numN; x++) {
+                n = grid2line(x, y);
+                map[n] = 0;
+                botm[n] = -1;
             }
         }
     }
 
+    private boolean outOfBounds(int i, int j) {
+        return (i <= 0 || i > num || j <= 0 || j > num);
+    }
+
+    private void checkLimit(int i, int j) {
+        if (outOfBounds(i, j))
+            throw new IndexOutOfBoundsException();
+    }
+
     // open site (row i, column j) if it is not open already
     public void open(int i, int j) {
-        int n = convert(i, j);
+        checkLimit(i, j);
+        int n = grid2line(i, j);
         if (map[n] == Status.CLOSED.ordinal()) {
             map[n] = Status.OPENED.ordinal();
-            if (j == 1 && i >= 0 && i <= N) union(n, virtTop);
-            if (j == N && i >= 0 && i <= N) union(n, virtBot);
-            openSites++;
+            if (i == 1 && j > 0 && j <= num) union(n, virtTop);
+            if (isBottom(n) && isFull(i, j)) union(n, virtBot);
+
             connectSides(i, j);
+            int b = botm[qf.find(n)];
+//            System.out.println("p = " + n + "; root = " + qf.find(n) + "; bot = " + b);
+            if (b != -1) {
+                if (isConnected(b, virtTop)) union(b, virtBot);
+//                System.out.println(n + " - " + isConnected(b, virtTop));
+            }
         }
     }
 
-    public void union(int p, int q) {
+    private void union(int p, int q) {
         qf.union(p, q);
     }
 
     // is site (row i, column j) open?
     public boolean isOpen(int i, int j) {
-        return map[convert(i, j)] != 0;
+        checkLimit(i, j);
+        return map[grid2line(i, j)] != 0;
     }
 
     // is site (row i, column j) full?
     public boolean isFull(int i, int j) {
-        return isConnected(convert(i, j), virtTop);
+        checkLimit(i, j);
+        return isConnected(grid2line(i, j), virtTop);
     }
 
     // does the system percolate?
@@ -74,67 +95,52 @@ public class Percolation {
         return qf.connected(virtBot, virtTop);
     }
 
-    public int convert(int i, int j) {
-        return (j - 1) * N + i - 1;
+    private int grid2line(int i, int j) {
+        return (i - 1) * num + j - 1;
     }
 
-    public void connectLeft(int i, int j) {
-        if (i > 1) {
-            int l = convert(i - 1, j);
-            if (l < 0) return;
-            if (!isOpen(i - 1, j)) {
-                union(l, convert(i, j));
+    private void connectSides(int i, int j) {
+        int p = grid2line(i, j);
+        int q, x, y;
+        for (int k = 0; k < 4; k++) {
+            x = i + borderShiftX[k];
+            y = j + borderShiftY[k];
+            q = grid2line(x, y);
+            if (outOfBounds(x, y)) continue;
+            if (isOpen(x, y)) {
+                if (isBottom(q)) registerBottom(p, q);
+                else if (isBottom(p)) registerBottom(q, p);
+                else {
+                    moveBottom(p, q);
+                }
+                union(p, q);
             }
         }
     }
 
-    public void connectRigth(int i, int j) {
-        if (i < N) {
-            int r = convert(i + 1, j);
-            if (r < 0) return;
-            if (isOpen(i + 1, j)) {
-                union(r, convert(i, j));
-            }
+    private boolean isBottom(int p) {
+        return p > lastLineStart;
+    }
+
+    private void registerBottom(int p, int q) {
+        botm[qf.find(p)] = q;
+    }
+
+    private void moveBottom(int p, int q) {
+        int b1 = botm[qf.find(p)];
+        int b2 = botm[qf.find(q)];
+
+        if (b1 != -1) {
+            registerBottom(p, b1);
+            registerBottom(q, b1);
+        } else if (b2 != -1) {
+            registerBottom(p, b2);
+            registerBottom(q, b2);
         }
     }
 
-    public void connectTop(int i, int j) {
-        if (j > 1) {
-            int t = convert(i, j - 1);
-            if (t < 0) return;
-            if (isOpen(i, j - 1)) {
-                union(t, convert(i, j));
-            }
-        }
-    }
-
-    public void connectBottom(int i, int j) {
-        if (j < N) {
-            int b = convert(i, j + 1);
-            if (b < 0) return;
-            if (isOpen(i, j + 1)) {
-                union(b, convert(i, j));
-            }
-        }
-    }
-
-    public void connectSides(int i, int j) {
-        connectTop(i, j);
-        connectBottom(i, j);
-        connectLeft(i, j);
-        connectRigth(i, j);
-    }
-
-    public boolean isConnected(int p, int q) {
+    private boolean isConnected(int p, int q) {
         return qf.connected(p, q);
-    }
-
-    public int getOpenSites() {
-        return openSites;
-    }
-
-    public double getThreashold() {
-        return (double) openSites / (N * N);
     }
 
     // test client (optional)

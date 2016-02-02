@@ -2,10 +2,10 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
-    protected double mean = 0;
-    protected double stddev = 0;
-    protected double confLo = 0;
-    protected double confHi = 0;
+    private double mean = 0;
+    private double stddev = 0;
+    private double confLo = 0;
+    private double confHi = 0;
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T) {
@@ -13,18 +13,31 @@ public class PercolationStats {
 
         double[] th = new double[T];
         double N2 = N * N;
+        int openSites;
 
         for (int i = 0; i < T; i++) {
             Percolation p = percolateIt(N);
-            th[i] = p.getOpenSites() / N2;
-            System.out.println(th[i]);
+            openSites = calcOpened(p, N);
+            th[i] = openSites / N2;
+//            System.out.println(th[i]);
         }
 
-        double sqT = Math.sqrt(T);
         mean = StdStats.mean(th);
         stddev = StdStats.stddev(th);
-        confLo = mean - 1.96 * stddev / sqT;
-        confHi = mean + 1.96 * stddev / sqT;
+        double delta = 1.96 * stddev / Math.sqrt(T);
+
+        confLo = mean - delta;
+        confHi = mean + delta;
+    }
+
+    private int calcOpened(Percolation p, int N) {
+        int openSites = 0;
+        for (int j = 1; j <= N; j++) {
+            for (int i = 1; i <= N; i++) {
+                if (p.isOpen(i, j)) openSites++;
+            }
+        }
+        return openSites;
     }
 
     // sample mean of percolation threshold
