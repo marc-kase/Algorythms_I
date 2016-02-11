@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Algorythms I.iml" filepath="$PROJECT_DIR$/Algorythms I.iml" />
       <module fileurl="file://$PROJECT_DIR$/Percolation/Percolation.iml" filepath="$PROJECT_DIR$/Percolation/Percolation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StacksQueues/StacksQueues.iml" filepath="$PROJECT_DIR$/StacksQueues/StacksQueues.iml" />
     </modules>
   </component>
 </project>
