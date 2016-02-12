@@ -32,7 +32,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Item dequeue() {
         if (isEmpty()) throw new java.util.NoSuchElementException();
 
-        if (size > 0) size--;
+        size--;
         int n = isEmpty() ? 0 : getRandom(size);
 
         Item item = items[n];
@@ -45,13 +45,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // return (but do not remove) a random item
     public Item sample() {
         if (isEmpty()) throw new java.util.NoSuchElementException();
-        return size > 1 ? items[getRandom(size - 1)] : items[0];
+        return size > 1 ? items[getRandom(size)] : items[0];
     }
 
     private void doResizing() {
         int len = items.length;
         if (size == len) resize(2 * len);
-        if (len > 3 && size == len / 4) resize(len / 2);
+        if (len > 1 && size == len / 4) resize(len / 2);
     }
 
     private void resize(int capacity) {
@@ -75,6 +75,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class RQIterator implements Iterator<Item> {
         private int sz = size;
+        Item[] copy = (Item[]) new Object[sz];
+
+
+        public RQIterator() {
+            System.arraycopy(items, 0, copy, 0, sz);
+//            for (int i = 0; i < sz; i++) copy[i] = items[i];
+        }
 
         @Override
         public boolean hasNext() {
@@ -83,8 +90,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
+            if (sz <= 0) throw new java.util.NoSuchElementException();
+
             sz--;
-            return sample();
+            int n = sz > 0 ? getRandom(sz) : 0;
+
+            Item it = copy[n];
+            if (n != sz) copy[n] = copy[sz];
+            return it;
         }
     }
 

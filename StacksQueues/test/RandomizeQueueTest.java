@@ -19,17 +19,18 @@ public class RandomizeQueueTest {
     public void init() {
         rq = new RandomizedQueue<>();
 
-        System.out.println("1. Init\n");
+        System.out.println("============================");
+        System.out.println("\nInit:");
         for (int i = 0; i < 4; i++) {
             System.out.println("enque: " + i);
             rq.enqueue(String.valueOf(i));
         }
-        pause(3000L);
+        pause(300L);
     }
 
     @Test
     public void notEmpty() {
-        System.out.println("2. Not empty\n");
+        System.out.println("\n2. Not empty:");
         for (int i = 0; i < 4; i++) {
             System.out.println("deque: " + rq.dequeue());
         }
@@ -40,12 +41,12 @@ public class RandomizeQueueTest {
         System.out.println("sample: " + rq.sample());
 
         Assert.assertEquals(true, rq.sample() != null);
-        pause(3000L);
+        pause(300L);
     }
 
     @Test
     public void iteration() {
-        System.out.println("Iteration:\n");
+        System.out.println("\nIteration:");
 
         Iterator<String> iterator = rq.iterator();
         while (iterator.hasNext()) {
@@ -53,6 +54,15 @@ public class RandomizeQueueTest {
         }
 
         Assert.assertEquals(true, rq.sample() != null);
+    }
+
+    @Test
+    public void sampling() {
+        System.out.println("\nSampling:");
+
+        for (int i = 0; i < 8; i++) {
+            System.out.println("sample: " + rq.sample());
+        }
     }
 
 }
