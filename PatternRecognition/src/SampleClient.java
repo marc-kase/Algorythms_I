@@ -2,11 +2,15 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class SampleClient {
     public static void main(String[] args) {
 
         // read the N points from a file
-        In in = new In(args[0]);
+        Path f = Paths.get("PatternRecognition/data/collinear/", args[0]);
+        In in = new In(f.toString());
         int N = in.readInt();
         Point[] points = new Point[N];
         for (int i = 0; i < N; i++) {
@@ -16,9 +20,11 @@ public class SampleClient {
         }
 
         // draw the points
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.setPenRadius(0.01);
         StdDraw.show(0);
-        StdDraw.setXscale(0, 32768);
-        StdDraw.setYscale(0, 32768);
+        StdDraw.setXscale(-32768, 32768);
+        StdDraw.setYscale(-32768, 32768);
         for (Point p : points) {
             p.draw();
         }
@@ -28,6 +34,8 @@ public class SampleClient {
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(StdDraw.BLACK);
             segment.draw();
         }
     }

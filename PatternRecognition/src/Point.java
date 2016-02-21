@@ -18,9 +18,6 @@ public class Point implements Comparable<Point> {
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
 
-    private final double precision = 0.001;
-    int dx0, dx1, dy0, dy1;
-
     /**
      * Initializes a new point.
      *
@@ -95,15 +92,11 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        dx0 = this.x - Point.this.x;
-        dx1 = that.x - Point.this.x;
-        dy0 = this.y - Point.this.y;
-        dy1 = that.y - Point.this.y;
-
+        if (that == null) throw new java.lang.NullPointerException();
         if (this.x == that.x && this.y == that.y) return Double.NEGATIVE_INFINITY;
         else if (this.x == that.x) return Double.POSITIVE_INFINITY;
         else if (this.y == that.y) return +0.0;
-        else return (double)(that.y - this.y) / (that.x - this.x);
+        else return (double) (that.y - this.y) / (that.x - this.x);
     }
 
     /**
@@ -119,24 +112,17 @@ public class Point implements Comparable<Point> {
 
     private class PolarOrder implements Comparator<Point> {
         public int compare(Point q1, Point q2) {
-            int cq1 = q1.compareTo(Point.this);
-            int cq2 = q2.compareTo(Point.this);
+            double s1 = Point.this.slopeTo(q1);
+            double s2 = Point.this.slopeTo(q2);
 
-            if (cq1 == 0 && cq2 == 0) return 0;
-            else if (cq1 < 0 && cq2 >= 0) return 1;
-            else if (cq2 < 0 && cq1 >= 0) return -1;
-            else {
-                double s1 = Point.this.slopeTo(q1);
-                double s2 = Point.this.slopeTo(q2);
-
-                if (s1 - s2 < precision) return 0;
-                else if (s1 < s2) return -1;
-                else return 1;
-            }
+            double precision = 0.0000001;
+            if (s1 == s2 || Math.abs(s1 - s2) < precision) return 0;
+            else if (s1 < s2) return -1;
+            else return 1;
         }
     }
 
-    public static int ccw(Point a, Point b, Point c) {
+    private static int ccw(Point a, Point b, Point c) {
         double area2 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
         if (area2 < 0) return -1; // clockwise
         else if (area2 > 0) return +1; // counter-clockwise
