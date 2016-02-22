@@ -8,9 +8,9 @@ public class FastCollinearPoints {
         double[] slope = new double[n];
 
 
-        for (int p=0; p<n; p++) {
+        for (int p = 0; p < n; p++) {
             Arrays.sort(points, points[p].slopeOrder());
-            for (int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
                 slope[i] = points[p].slopeTo(points[i]);
 
             }
@@ -19,8 +19,12 @@ public class FastCollinearPoints {
     }
 
     // the number of line segments
-    public int numberOfSegments() {return 0;}
+    public int numberOfSegments() {
+        return 0;
+    }
 
     // the line segments
-    public LineSegment[] segments() {return null;}
+    public LineSegment[] segments() {
+        return null;
+    }
 }
