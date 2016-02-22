@@ -112,6 +112,8 @@ public class Point implements Comparable<Point> {
 
     private class PolarOrder implements Comparator<Point> {
         public int compare(Point q1, Point q2) {
+            if (q1 == Point.this || q2 == Point.this) return 0;
+
             double s1 = Point.this.slopeTo(q1);
             double s2 = Point.this.slopeTo(q2);
 

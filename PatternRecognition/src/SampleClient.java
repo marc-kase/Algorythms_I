@@ -6,6 +6,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SampleClient {
+
+    private static void bruteCollinear(Point[] points) {
+        // print and draw the line segments
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            segment.draw();
+        }
+    }
+
+    private static void fastCollinear(Point[] points) {
+        // print and draw the line segments
+        FastCollinearPoints fcollinear = new FastCollinearPoints(points);
+        for (LineSegment segment : fcollinear.segments()) {
+            StdOut.println(segment);
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            segment.draw();
+        }
+    }
+
     public static void main(String[] args) {
 
         // read the N points from a file
@@ -30,13 +53,9 @@ public class SampleClient {
         }
         StdDraw.show();
 
-        // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-        for (LineSegment segment : collinear.segments()) {
-            StdOut.println(segment);
-            StdDraw.setPenRadius(0.001);
-            StdDraw.setPenColor(StdDraw.BLACK);
-            segment.draw();
-        }
+//        bruteCollinear(points);
+        fastCollinear(points);
+
+
     }
 }
