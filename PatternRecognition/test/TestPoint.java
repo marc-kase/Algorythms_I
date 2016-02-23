@@ -1,3 +1,5 @@
+import java.util.Date;
+
 /**
  * Created by MM on 22.02.2016.
  */
@@ -32,6 +34,7 @@ public class TestPoint extends Point{
     }
 
     public static void main(String[] args) {
-        reflexive();
+        System.out.println(new Date(1456250400000L));
+//        reflexive();
     }
 }

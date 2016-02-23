@@ -131,6 +131,14 @@ public class Point implements Comparable<Point> {
         else return 0; // collinear
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     /**
      * Unit tests the Point data type.
      */
