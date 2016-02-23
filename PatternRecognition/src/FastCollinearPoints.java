@@ -11,28 +11,39 @@ public class FastCollinearPoints {
         int n = points.length;
         double delta, slope0, slope1;
 
-        for (int p = 0; p < n; p++) {
-            Arrays.sort(points, new CoordsOrder());
+        Arrays.sort(points, new CoordsOrder());
+        for (int p = 2; p < 3; p++) {
+
             Arrays.sort(points, points[p].slopeOrder());
 
             int p0 = 0, ni = 1;
+            slope0 = points[p].slopeTo(points[p0]);
             System.out.print("s" + p0 + "=" + points[p].slopeTo(points[p0]));
 
             for (int i = 1; i < n; i++) {
+                if (i == p) continue;
 
-                slope0 = points[p].slopeTo(points[p0]);
                 slope1 = points[p].slopeTo(points[i]);
-                delta = Math.abs(slope0 - slope1);
+
+                if (slope0 == Double.POSITIVE_INFINITY && slope1 == Double.POSITIVE_INFINITY) {
+                    delta = 0.0;
+                }
+                else if (slope0 == Double.NEGATIVE_INFINITY && slope1 == Double.NEGATIVE_INFINITY) {
+                    delta = 0.0;
+                } else {
+                    delta = Math.abs(slope0 - slope1);
+                }
                 System.out.print("; s" + i + "=" + slope1);
 
                 if (delta < 0.001) ni++;
-                if (delta > 0.001) {
-                    if (ni > 3) {
+                if (delta > 0.001 || i == n-1) {
+                    if (ni > 2) {
                         lineSegments.add(new LineSegment(points[p], points[p0 + ni - 1]));
                         System.out.println("\t\tLine: " + p + "->" + (ni + p0 - 1));
                     }
                     ni = 1;
                     p0 = i;
+                    slope0 = points[p].slopeTo(points[p0]);
                     System.out.println();
                     System.out.print("s" + p0 + "=" + points[p].slopeTo(points[p0]));
                 }
