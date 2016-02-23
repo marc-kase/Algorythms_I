@@ -20,6 +20,7 @@ public class FastCollinearPoints {
             slope0 = points[p].slopeTo(points[p0]);
             System.out.print("s" + p0 + "=" + points[p].slopeTo(points[p0]));
 
+
             for (int i = 1; i < n; i++) {
                 if (i == p) continue;
 
