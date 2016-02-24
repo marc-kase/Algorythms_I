@@ -12,17 +12,17 @@ public class FastCollinearPoints {
         double delta, slope0, slope1;
 
         Arrays.sort(points, new CoordsOrder());
-        for (int p = 2; p < 3; p++) {
+        for (int p = 3; p < 4; p++) {
 
             Arrays.sort(points, points[p].slopeOrder());
 
-            int p0 = 0, ni = 1;
+            int p0 = p, ni = 1;
             slope0 = points[p].slopeTo(points[p0]);
             System.out.print("s" + p0 + "=" + points[p].slopeTo(points[p0]));
 
 
             for (int i = 1; i < n; i++) {
-                if (i == p) continue;
+                if (i == p0) continue;
 
                 slope1 = points[p].slopeTo(points[i]);
 
