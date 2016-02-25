@@ -19,9 +19,19 @@ public class TestFastCollinear {
     }
 
     public static void main(String[] args) {
+//        int scaleXmin = -32768;
+//        int scaleXmax = 32768;
+//        int scaleYmin = -32768;
+//        int scaleYmax = 32768;
+
         // read the N points from a file
 //        int[] x = {0, 0, 0, 0, 0, 5000, 5000, 5000, 5000, 5000,10000,10000,10000,10000,10000,15000,15000,15000,15000,15000,20000,20000,20000,20000,20000};
 //        int[] y = {0, 5000,10000,15000,20000, 0, 5000,10000,15000,20000, 0, 5000,10000,15000,20000, 0, 5000,10000,15000,20000, 0, 5000,10000,15000,20000};
+
+        int scaleXmin = -0;
+        int scaleXmax = 5;
+        int scaleYmin = -0;
+        int scaleYmax = 5;
 
         int s = 4;
         int n = s * s;
@@ -47,8 +57,8 @@ public class TestFastCollinear {
         StdDraw.setPenColor(StdDraw.RED);
         StdDraw.setPenRadius(0.01);
         StdDraw.show(0);
-        StdDraw.setXscale(-32768, 32768);
-        StdDraw.setYscale(-32768, 32768);
+        StdDraw.setXscale(scaleXmin, scaleXmax);
+        StdDraw.setYscale(scaleYmin, scaleYmax);
         for (Point p : points) {
             p.draw();
         }

@@ -1,13 +1,19 @@
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class FastCollinearPoints {
+/**
+ * Created by mark on 2/25/16.
+ */
+public class FastCollinearPointsDecor {
     private List<LineSegment> lineSegments = new ArrayList<>();
+    private List<Point> checked = new ArrayList<>();
 
     // finds all line segments containing 4 or more points
-    public FastCollinearPoints(Point[] points) {
+    public FastCollinearPointsDecor(Point[] points) {
         int n = points.length;
         double delta, slope0, slope1;
         Point pivot;
@@ -20,10 +26,16 @@ public class FastCollinearPoints {
 
             Arrays.sort(points, new CoordsOrder());
             pivot = points[p];
-            int p0 = 0;
 
             Arrays.sort(points, pivot.slopeOrder());
+            System.out.println();
+            System.out.println("Pivot: " + PointTest.toStr(pivot));
+            for (Point po : points) StdOut.print(PointTest.toStr(po) + ", ");
+            System.out.println();
+
+            int p0 = 0;
             slope0 = pivot.slopeTo(points[p0]);
+            System.out.print("s" + p0 + PointTest.toStr(pivot) + "^" + PointTest.toStr(points[p0]) + "=" + pivot.slopeTo(points[p0]));
 
             for (int i = 1; i < n; i++) {
 
@@ -44,6 +56,7 @@ public class FastCollinearPoints {
                 } else {
                     delta = Math.abs(slope0 - slope1);
                 }
+                System.out.print("; s" + i + PointTest.toStr(pivot) + "^" + PointTest.toStr(points[i]) + "=" + slope1);
 
                 if (delta < 0.001) {
                     tmpPnts.add(points[i]);
@@ -53,17 +66,23 @@ public class FastCollinearPoints {
                     if (tmpPnts.size() > 3) {
                         pnts = tmpPnts.toArray(new Point[tmpPnts.size()]);
                         Arrays.sort(pnts, new CoordsOrder());
+
                         lineSegments.add(new LineSegment(pnts[0], pnts[pnts.length - 1]));
+                        System.out.println("\t\tLine: " + pnts[0] + "->" + pnts[pnts.length - 1]);
                     }
                     p0 = i;
                     tmpPnts.clear();
                     tmpPnts.add(pivot);
                     tmpPnts.add(points[p0]);
                     slope0 = pivot.slopeTo(points[p0]);
+                    System.out.println();
+                    System.out.print("s" + p0 + PointTest.toStr(pivot) + "^" + PointTest.toStr(points[p0]) + "=" + pivot.slopeTo(points[p0]));
                 }
             }
 
+            System.out.println("\n***************Level next: " + p + "*****************");
         }
+        System.out.println("done");
     }
 
     // the number of line segments
