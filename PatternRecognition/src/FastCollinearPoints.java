@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FastCollinearPoints {
-    private final double precision = 0.00000000000000000000000000000000001;
+    private static final double PRECISION = 0.00000000000000000000000000000000001;
     private List<LineSegment> lineSegments = new ArrayList<>();
 
     // finds all line segments containing 4 or more points
@@ -48,11 +48,11 @@ public class FastCollinearPoints {
                     delta = Math.abs(slope0 - slope1);
                 }
 
-                if (delta < precision) {
+                if (delta < PRECISION) {
                     tmpPnts.add(cpoints[i]);
 
                 }
-                if (delta > precision || i >= n - 1) {
+                if (delta > PRECISION || i >= n - 1) {
                     if (tmpPnts.size() > 3) {
                         pnts = tmpPnts.toArray(new Point[tmpPnts.size()]);
                         Arrays.sort(pnts, new CoordsOrder());
