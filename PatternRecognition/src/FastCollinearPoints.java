@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FastCollinearPoints {
+    private final double precision = 0.00000000000000000000000000000000001;
     private List<LineSegment> lineSegments = new ArrayList<>();
 
     // finds all line segments containing 4 or more points
@@ -14,28 +15,30 @@ public class FastCollinearPoints {
         Point[] pnts;
 
         List<Point> tmpPnts = new ArrayList<>();
+        Point[]cpoints = new Point[n];
+        System.arraycopy(points, 0, cpoints, 0, n);
 
-        for (int p = 1; p < n; p++) {
+        for (int p = 0; p < n; p++) {
             tmpPnts.clear();
 
-            Arrays.sort(points, new CoordsOrder());
-            pivot = points[p];
+            Arrays.sort(cpoints, new CoordsOrder());
+            pivot = cpoints[p];
             int p0 = 0;
 
-            Arrays.sort(points, pivot.slopeOrder());
-            slope0 = pivot.slopeTo(points[p0]);
+            Arrays.sort(cpoints, pivot.slopeOrder());
+            slope0 = pivot.slopeTo(cpoints[p0]);
 
             for (int i = 1; i < n; i++) {
 
                 if (slope0 == Double.NEGATIVE_INFINITY) {
                     p0++;
-                    slope0 = pivot.slopeTo(points[p0]);
+                    slope0 = pivot.slopeTo(cpoints[p0]);
                     tmpPnts.add(pivot);
-                    tmpPnts.add(points[p0]);
+                    tmpPnts.add(cpoints[p0]);
                     continue;
                 }
 
-                slope1 = pivot.slopeTo(points[i]);
+                slope1 = pivot.slopeTo(cpoints[i]);
 
                 if (slope0 == Double.POSITIVE_INFINITY && slope1 == Double.POSITIVE_INFINITY) {
                     delta = 0.0;
@@ -45,21 +48,21 @@ public class FastCollinearPoints {
                     delta = Math.abs(slope0 - slope1);
                 }
 
-                if (delta < 0.001) {
-                    tmpPnts.add(points[i]);
+                if (delta < precision) {
+                    tmpPnts.add(cpoints[i]);
 
                 }
-                if (delta > 0.001 || i >= n - 1) {
+                if (delta > precision || i >= n - 1) {
                     if (tmpPnts.size() > 3) {
                         pnts = tmpPnts.toArray(new Point[tmpPnts.size()]);
                         Arrays.sort(pnts, new CoordsOrder());
-                        lineSegments.add(new LineSegment(pnts[0], pnts[pnts.length - 1]));
+                        if (pivot == pnts[0]) lineSegments.add(new LineSegment(pnts[0], pnts[pnts.length - 1]));
                     }
                     p0 = i;
                     tmpPnts.clear();
                     tmpPnts.add(pivot);
-                    tmpPnts.add(points[p0]);
-                    slope0 = pivot.slopeTo(points[p0]);
+                    tmpPnts.add(cpoints[p0]);
+                    slope0 = pivot.slopeTo(cpoints[p0]);
                 }
             }
 
