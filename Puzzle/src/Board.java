@@ -49,6 +49,5 @@ public class Board {
 
     // unit tests (not graded)
     public static void main(String[] args) {
-
     }
 }
