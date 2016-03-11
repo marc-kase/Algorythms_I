@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 public class Point implements Comparable<Point> {
 
+    private static final double PRECISION = 0.00000000000000000000000000000000001;
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
 
@@ -98,7 +99,7 @@ public class Point implements Comparable<Point> {
         else if (this.y == that.y) return +0.0;
         else {
             double s = (double) (that.y - this.y) / (that.x - this.x);
-            return Math.abs(s) < 0.001 ? +0.0 : s;
+            return Math.abs(s) < PRECISION ? +0.0 : s;
         }
     }
 
@@ -120,7 +121,7 @@ public class Point implements Comparable<Point> {
             double s1 = Point.this.slopeTo(q1);
             double s2 = Point.this.slopeTo(q2);
 
-            if (s1 == s2 || Math.abs(s1 - s2) < 0.001) return 0;
+            if (s1 == s2 || Math.abs(s1 - s2) < PRECISION) return 0;
             else if (s1 < s2) return -1;
             else return 1;
         }
@@ -138,8 +139,9 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
-        Point p = new Point(4, 1);
-        Point q = new Point(1, 2);
+        Point p = new Point(2635, 16067);
+        Point q = new Point(30808, 16094);
         double s1 = p.slopeTo(q);
+        System.out.println(s1);
     }
 }
