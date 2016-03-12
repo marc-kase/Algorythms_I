@@ -4,7 +4,8 @@ public class Board {
 
     public int[][] blocks;
     private int n, num;
-    private int[] blanks = new int[3];
+    private int[] blanks = new int[5];
+    private int state = 0;
 
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
@@ -13,11 +14,18 @@ public class Board {
         n = blocks.length;
         num = n * n;
 
+        findBlank();
+    }
+
+    private int findBlank() {
         int[] c;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
-            if (blocks[c[0]][c[1]] == num) blanks[0] = i;
+            if (blocks[c[0]][c[1]] == num) {
+                return i;
+            }
         }
+        return -1;
     }
 
     // board dimension N
@@ -67,38 +75,32 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
+        int[] s = new int[]{0, 0};
 
-        int[] b = line2grid(blanks[0]);
+        int[] b = line2grid(findBlank());
         int i = b[0];
         int j = b[1];
 
-        int[][] blcks = new int[n][n];
+        int[][] twins = new int[n][n];
         for (int k = 1; k < num + 1; k++) {
             int[] c = line2grid(k);
-            blcks[c[0]][c[1]] = blocks[c[0]][c[1]];
+            twins[c[0]][c[1]] = blocks[c[0]][c[1]];
         }
-        int helper = blcks[i][j];
-        blcks[i][j] = blcks[i + 1][j];
-        blcks[i + 1][j] = helper;
 
-        return new Board(blcks);
-    }
-
-    public Board twin2() {
-        int[] b = line2grid(blanks[0]);
-        int i = b[0];
-        int j = b[1];
-
-        int[][] blcks = new int[n][n];
-        for (int k = 1; k < num + 1; k++) {
-            int[] c = line2grid(k);
-            blcks[c[0]][c[1]] = blocks[c[0]][c[1]];
+        boolean left = false, right = false, up = false, dw = false;
+        while (!(left && right && up && dw)) {
+            s = nextState();
+            right = i + s[0] < n;
+            left = i + s[0] > -1;
+            up = j + s[1] < n;
+            dw = j + s[1] > -1;
         }
-        int helper = blcks[i][j];
-        blcks[i][j] = blcks[i][j + 1];
-        blcks[i][j + 1] = helper;
 
-        return new Board(blcks);
+        int helper = twins[i][j];
+        twins[i][j] = twins[i + s[0]][j + s[1]];
+        twins[i + s[0]][j + s[1]] = helper;
+
+        return new Board(twins);
     }
 
     // does this board equal y?
@@ -106,7 +108,7 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
 
-        Board that = (Board)y;
+        Board that = (Board) y;
         return Arrays.deepEquals(this.blocks, that.blocks);
     }
 
@@ -131,6 +133,31 @@ public class Board {
         int j = (line - 1) / n;
         int i = line - 1 - j * n;
         return new int[]{i, j};
+    }
+
+    private int[] nextState() {
+        state++;
+        if (state > 4) state = 1;
+
+        int[] c;
+        switch (state) {
+            case 1:
+                c = new int[]{0, -1};
+                break;
+            case 2:
+                c = new int[]{1, 0};
+                break;
+            case 3:
+                c = new int[]{0, 1};
+                break;
+            case 4:
+                c = new int[]{-1, 0};
+                break;
+            default:
+                c = new int[]{0, 0};
+                break;
+        }
+        return c;
     }
 
     // unit tests (not graded)

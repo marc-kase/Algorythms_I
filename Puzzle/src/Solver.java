@@ -14,6 +14,8 @@ public class Solver {
             this.previous = previous;
             this.moves = moves;
             priority = board.manhattan() + moves;
+
+            System.out.println(board.toString());
         }
 
         @Override
@@ -31,12 +33,15 @@ public class Solver {
         pq.insert(first);
         pq.delMin();
 
-
+        System.out.println();
         SearchNode n1 = new SearchNode(initial.twin(), first, 1);
         pq.insert(n1);
+        System.out.println("Manhattan: " + n1.board.manhattan());
 
+        System.out.println();
         SearchNode n2 = new SearchNode(initial.twin(), first, 1);
         pq.insert(n2);
+        System.out.println("Manhattan: " + n2.board.manhattan());
 
         pq.delMin();
     }

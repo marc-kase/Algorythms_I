@@ -45,20 +45,20 @@ public class TestSolver extends Solver {
 
         // solve the puzzle
         TestSolver solver = new TestSolver(initial);
-        solver.testBoard(initial);
-        System.out.println(initial.toString());
+//        solver.testBoard(initial);
+//        System.out.println(initial.toString());
 
-        moves++;
+//        moves++;
 
-        Board b3 = initial.twin2();
-        solver.testBoard(b3);
-        System.out.println(b3.toString());
+//        Board b3 = initial.twin2();
+//        solver.testBoard(b3);
+//        System.out.println(b3.toString());
 
-        Board b2 = initial.twin();
-        solver.testBoard(b2);
-        System.out.println(b2.toString());
+//        Board b2 = initial.twin();
+//        solver.testBoard(b2);
+//        System.out.println(b2.toString());
 
-        System.out.println("Is a goal: " + b2.isGoal());
+//        System.out.println("Is a goal: " + b2.isGoal());
 
         // print solution to standard output
         if (!solver.isSolvable())
