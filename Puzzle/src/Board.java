@@ -4,7 +4,6 @@ public class Board {
 
     public int[][] blocks;
     private int n, num;
-    private int[] blanks = new int[5];
     private int state = 0;
 
     // construct a board from an N-by-N array of blocks
@@ -87,14 +86,14 @@ public class Board {
             twins[c[0]][c[1]] = blocks[c[0]][c[1]];
         }
 
-        boolean left = false, right = false, up = false, dw = false;
-        while (!(left && right && up && dw)) {
-            s = nextState();
-            right = i + s[0] < n;
-            left = i + s[0] > -1;
-            up = j + s[1] < n;
-            dw = j + s[1] > -1;
-        }
+        boolean left, right, up, dw;
+        s = nextState();
+        right = i + s[0] < n;
+        left = i + s[0] > -1;
+        up = j + s[1] < n;
+        dw = j + s[1] > -1;
+
+        if (!(left && right && up && dw)) return null;
 
         int helper = twins[i][j];
         twins[i][j] = twins[i + s[0]][j + s[1]];

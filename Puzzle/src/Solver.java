@@ -3,6 +3,8 @@ import edu.princeton.cs.algs4.MinPQ;
 public class Solver {
 
     private SearchNode first, solution;
+    private int moves = 0;
+
     private static class SearchNode implements Comparable<SearchNode> {
         private Board board;
         private SearchNode previous;
@@ -33,16 +35,19 @@ public class Solver {
         pq.insert(first);
         pq.delMin();
 
-        System.out.println();
-        SearchNode n1 = new SearchNode(initial.twin(), first, 1);
-        pq.insert(n1);
-        System.out.println("Manhattan: " + n1.board.manhattan());
+        Board current = initial;
+        SearchNode previous = first;
+        moves++;
 
-        System.out.println();
-        SearchNode n2 = new SearchNode(initial.twin(), first, 1);
-        pq.insert(n2);
-        System.out.println("Manhattan: " + n2.board.manhattan());
-
+        for (int k = 0; k < 4; k++) {
+            System.out.println(k + ".");
+            Board twin = current.twin();
+            if (twin != null) {
+                SearchNode sn = new SearchNode(twin, previous, moves);
+                pq.insert(sn);
+                System.out.println("Manhattan: " + sn.board.manhattan());
+            }
+        }
         pq.delMin();
     }
 
@@ -53,7 +58,7 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return 0;
+        return moves;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
@@ -62,5 +67,6 @@ public class Solver {
     }
 
     // solve a slider puzzle (given below)
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+    }
 }
