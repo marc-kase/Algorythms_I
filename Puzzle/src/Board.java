@@ -1,9 +1,10 @@
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class Board {
 
-    public int[][] blocks;
-    private int n, num;
+    public final int[][] blocks;
+    private int n, num, blank = 0;
     private int state = 0;
 
     // construct a board from an N-by-N array of blocks
@@ -20,7 +21,7 @@ public class Board {
         int[] c;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
-            if (blocks[c[0]][c[1]] == num) {
+            if (blocks[c[1]][c[0]] == blank) {
                 return i;
             }
         }
@@ -38,7 +39,7 @@ public class Board {
         int h = 0;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
-            if (blocks[c[0]][c[1]] != i && blocks[c[0]][c[1]] != num) h++;
+            if (blocks[c[1]][c[0]] != i && blocks[c[1]][c[0]] != blank) h++;
         }
         return h;
     }
@@ -49,10 +50,10 @@ public class Board {
         int m = 0;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
-            if (blocks[c[0]][c[1]] != i && blocks[c[0]][c[1]] != num) {
-                goal = line2grid(blocks[c[0]][c[1]]);
-                int dx = Math.abs(goal[0] - c[0]);
-                int dy = Math.abs(goal[1] - c[1]);
+            if (blocks[c[1]][c[0]] != i && blocks[c[1]][c[0]] != blank) {
+                goal = line2grid(blocks[c[1]][c[0]]);
+                int dx = Math.abs(goal[1] - c[1]);
+                int dy = Math.abs(goal[0] - c[0]);
                 m += (dx + dy);
             }
         }
@@ -61,6 +62,7 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
+/*
         int[] c;
         int[][] g = new int[n][n];
 
@@ -70,6 +72,9 @@ public class Board {
         }
 
         return equals(new Board(g));
+*/
+
+        return hamming() == 0;
     }
 
     // a board that is obtained by exchanging any pair of blocks
@@ -77,27 +82,27 @@ public class Board {
         int[] s;
 
         int[] b = line2grid(findBlank());
-        int i = b[0];
-        int j = b[1];
+        int i = b[1];
+        int j = b[0];
 
         int[][] twins = new int[n][n];
         for (int k = 1; k < num + 1; k++) {
             int[] c = line2grid(k);
-            twins[c[0]][c[1]] = blocks[c[0]][c[1]];
+            twins[c[1]][c[0]] = blocks[c[1]][c[0]];
         }
 
         boolean left, right, up, dw;
         s = nextState();
-        right = i + s[0] < n;
-        left = i + s[0] > -1;
-        up = j + s[1] < n;
-        dw = j + s[1] > -1;
+        right = i + s[1] < n;
+        left = i + s[1] > -1;
+        up = j + s[0] < n;
+        dw = j + s[0] > -1;
 
         if (!(left && right && up && dw)) return null;
 
         int helper = twins[i][j];
-        twins[i][j] = twins[i + s[0]][j + s[1]];
-        twins[i + s[0]][j + s[1]] = helper;
+        twins[i][j] = twins[i + s[1]][j + s[0]];
+        twins[i + s[1]][j + s[0]] = helper;
 
         return new Board(twins);
     }
@@ -108,24 +113,24 @@ public class Board {
         if (y.getClass() != this.getClass()) return false;
 
         Board that = (Board) y;
-        return Arrays.deepEquals(this.blocks, that.blocks);
+        return this == that || Arrays.deepEquals(this.blocks, that.blocks);
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+        return new BoardIterable();
     }
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        String res = blocks[0][0] + " " + blocks[1][0] + " " + blocks[2][0] + "\n";
-        res += blocks[0][1] + " " + blocks[1][1] + " " + blocks[2][1] + "\n";
-        res += blocks[0][2] + " " + blocks[1][2] + " " + blocks[2][2];
+        String res = "";
+        int[] c;
+        for (int i = 1; i < num + 1; i++) {
+            c = line2grid(i);
+            res += " " + blocks[c[1]][c[0]];
+            if (i%n == 0) res += "\n";
+        }
         return res;
-    }
-
-    private int grid2line(int i, int j) {
-        return i * n + j;
     }
 
     private int[] line2grid(int line) {
@@ -157,6 +162,25 @@ public class Board {
                 break;
         }
         return c;
+    }
+
+    private class BoardIterable implements Iterable<Board> {
+        @Override
+        public Iterator<Board> iterator() {
+            return new BoardIterator();
+        }
+    }
+
+    private class BoardIterator implements Iterator<Board> {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Board next() {
+            return null;
+        }
     }
 
     // unit tests (not graded)

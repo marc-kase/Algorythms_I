@@ -17,7 +17,7 @@ public class TestSolver extends Solver {
         // create initial board from file
         int N = 3;
         int[][] blocks = new int[N][N];
-        blocks[0][0] = N * N;
+        blocks[0][0] = 0;
         blocks[1][0] = 1;
         blocks[2][0] = 3;
 
@@ -34,7 +34,7 @@ public class TestSolver extends Solver {
         blocks[2][0] = 3;
 
         blocks[0][1] = 4;
-        blocks[1][1] = N * N;
+        blocks[1][1] = 0;
         blocks[2][1] = 2;
 
         blocks[0][2] = 7;

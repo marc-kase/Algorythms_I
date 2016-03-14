@@ -1,10 +1,16 @@
 import edu.princeton.cs.algs4.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Client {
     public static void main(String[] args) {
+//        String filename = "puzzle3x3-06.txt";
+        String filename = "puzzle2x2-03.txt";
+        Path f = Paths.get(args[0], filename);
 
         // create initial board from file
-        In in = new In(args[0]);
+        In in = new In(f.toFile());
         int N = in.readInt();
         int[][] blocks = new int[N][N];
         for (int i = 0; i < N; i++)
