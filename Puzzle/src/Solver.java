@@ -33,22 +33,30 @@ public class Solver {
     public Solver(Board initial) {
         first = new SearchNode(initial, null, 0);
         pq.insert(first);
-        pq.delMin();
 
-        Board current = initial;
-        SearchNode previous = first;
-        moves++;
+        Board currBoard;
+        SearchNode previousSN = pq.delMin();
 
-        for (int k = 0; k < 4; k++) {
-            System.out.println(k + ".");
-            Board twin = current.twin();
-            if (twin != null) {
-                SearchNode sn = new SearchNode(twin, previous, moves);
-                pq.insert(sn);
-                System.out.println("Manhattan: " + sn.board.manhattan());
+        while (!previousSN.board.isGoal()) {
+            moves++;
+            currBoard = previousSN.board;
+            System.out.println("Move : " + moves);
+
+            for (int k = 0; k < 4; k++) {
+                System.out.println(k + ".");
+                Board twin = currBoard.twin();
+                if (twin != null) {
+                    SearchNode sn = new SearchNode(twin, previousSN, moves);
+                    if (!sn.board.equals(initial))
+                        pq.insert(sn);
+                    System.out.println("Manhattan: " + sn.board.manhattan());
+                }
             }
+            previousSN = pq.delMin();
         }
-        pq.delMin();
+
+        System.out.println("Result: \n" + previousSN.board.toString());
+
     }
 
     // is the initial board solvable?

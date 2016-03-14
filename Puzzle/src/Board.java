@@ -74,7 +74,7 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int[] s = new int[]{0, 0};
+        int[] s;
 
         int[] b = line2grid(findBlank());
         int i = b[0];
