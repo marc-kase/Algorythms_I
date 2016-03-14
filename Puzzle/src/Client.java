@@ -5,8 +5,9 @@ import java.nio.file.Paths;
 
 public class Client {
     public static void main(String[] args) {
-//        String filename = "puzzle3x3-06.txt";
-        String filename = "puzzle2x2-03.txt";
+//        String filename = "puzzle2x2-06.txt";
+        String filename = "puzzle4x4-10.txt";
+//        String filename = "test.txt";
         Path f = Paths.get(args[0], filename);
 
         // create initial board from file
@@ -16,6 +17,7 @@ public class Client {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
                 blocks[i][j] = in.readInt();
+
         Board initial = new Board(blocks);
 
         // solve the puzzle
@@ -27,7 +29,7 @@ public class Client {
         else {
             StdOut.println("Minimum number of moves = " + solver.moves());
             for (Board board : solver.solution())
-                StdOut.println(board);
+                StdOut.println(/*board*/);
         }
     }
 }

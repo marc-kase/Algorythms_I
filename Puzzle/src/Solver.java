@@ -1,9 +1,16 @@
 import edu.princeton.cs.algs4.MinPQ;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class Solver {
 
     private SearchNode first, solution = null;
     private int moves = 0;
+    private boolean isGoal = false;
+    private MinPQ<SearchNode> pq = new MinPQ<>();
+    private List<Board> solutions = new ArrayList<>();
 
     private static class SearchNode implements Comparable<SearchNode> {
         private Board board;
@@ -27,49 +34,50 @@ public class Solver {
         }
     }
 
-    private MinPQ<SearchNode> pq = new MinPQ<>();
-
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        boolean isGoal = false;
+        isGoal = false;
         first = new SearchNode(initial, null, 0);
         pq.insert(first);
 
-        Board currBoard;
+        SearchNode sn;
         SearchNode previousSN = pq.delMin();
 
         while (!isGoal) {
             moves++;
-            currBoard = previousSN.board;
-            System.out.println("Move : " + moves);//todo test
 
+            System.out.println("Moves : " + moves + " =====================================");//todo test
             int k = 0;
             do {
                 System.out.println(k + ".");//todo test
-                Board twin = currBoard.twin();
+                Board twin = previousSN.board.twin();
                 if (twin != null) {
                     isGoal = twin.isGoal();
-                    SearchNode sn = new SearchNode(twin, previousSN, moves);
-                    if (!sn.board.equals(previousSN))
+                    if (isUnique(twin, previousSN)) {
+                        sn = new SearchNode(twin, previousSN, moves);
                         pq.insert(sn);
-                    System.out.println("Manhattan: " + sn.board.manhattan());//todo test
+                        System.out.println("Manhattan: " + sn.board.manhattan());//todo test
+                    }
 
                     if (isGoal) {
-                        solution = new SearchNode(twin, previousSN, moves);
-                        k = 4;
+                        solutions.add(twin);
+                        k = 3;
                     }
                 }
-            } while (k++ < 4);
-            if (!isGoal) previousSN = pq.delMin();
+            } while (k++ < 3);
+            if (!isGoal) {
+                previousSN = pq.delMin();
+                solutions.add(previousSN.board);
+            }
         }
 
-        System.out.println("Result: \n" + solution.board.toString() + "\nmoves: " + moves());//todo test
+        System.out.println("Result: \n" + solutions.get(solutions.size()-1).toString() + "\nmoves: " + moves());//todo test
 
     }
 
     // is the initial board solvable?
     public boolean isSolvable() {
-        return false;
+        return isGoal;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -79,7 +87,31 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        return null;
+        return new Iterable<Board>() {
+            @Override
+            public Iterator<Board> iterator() {
+                return solutions.listIterator();
+            }
+        };
+    }
+
+    private boolean isUnique(Board board, SearchNode snode) {
+        if (snode == null) return true;
+        if (moves == 0) return true;
+        if (board.equals(snode.board)) return false;
+        if (board.equals(first.board)) return false;
+
+        SearchNode node = snode.previous;
+        if (node == null) return true;
+
+        while (node != null) {
+            Iterable<Board> it = node.board.neighbors();
+            for (Board n : it) {
+                if (board.equals(n)) return false;
+            }
+            node = node.previous;
+        }
+        return true;
     }
 
     // solve a slider puzzle (given below)

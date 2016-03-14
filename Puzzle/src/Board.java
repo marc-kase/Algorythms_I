@@ -1,9 +1,9 @@
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 public class Board {
 
     public final int[][] blocks;
+    private List<Board> neighbors = new ArrayList<>();
     private int n, num, blank = 0;
     private int state = 0;
 
@@ -62,18 +62,6 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-/*
-        int[] c;
-        int[][] g = new int[n][n];
-
-        for (int i = 1; i < num + 1; i++) {
-            c = line2grid(i);
-            g[c[0]][c[1]] = i;
-        }
-
-        return equals(new Board(g));
-*/
-
         return hamming() == 0;
     }
 
@@ -104,7 +92,9 @@ public class Board {
         twins[i][j] = twins[i + s[1]][j + s[0]];
         twins[i + s[1]][j + s[0]] = helper;
 
-        return new Board(twins);
+        Board t = new Board(twins);
+        neighbors.add(t);
+        return t;
     }
 
     // does this board equal y?
@@ -118,7 +108,12 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return new BoardIterable();
+        return new Iterable<Board>() {
+            @Override
+            public Iterator<Board> iterator() {
+                return neighbors.listIterator();
+            }
+        };
     }
 
     // string representation of this board (in the output format specified below)
@@ -127,8 +122,8 @@ public class Board {
         int[] c;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
-            res += " " + blocks[c[1]][c[0]];
-            if (i%n == 0) res += "\n";
+            res += "\t" + blocks[c[1]][c[0]];
+            if (i % n == 0) res += "\n";
         }
         return res;
     }
@@ -162,25 +157,6 @@ public class Board {
                 break;
         }
         return c;
-    }
-
-    private class BoardIterable implements Iterable<Board> {
-        @Override
-        public Iterator<Board> iterator() {
-            return new BoardIterator();
-        }
-    }
-
-    private class BoardIterator implements Iterator<Board> {
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        @Override
-        public Board next() {
-            return null;
-        }
     }
 
     // unit tests (not graded)
