@@ -24,7 +24,7 @@ public class Solver {
             this.moves = moves;
             priority = board.manhattan() + moves;
 
-            System.out.println(board.toString());
+            System.out.println(board.toString() + "H:" + board.hamming() + " M:" + board.manhattan() + "\n");//todo test
         }
 
         @Override
@@ -49,14 +49,12 @@ public class Solver {
             System.out.println("Moves : " + moves + " =====================================");//todo test
             int k = 0;
             do {
-                System.out.println(k + ".");//todo test
                 Board twin = previousSN.board.twin();
                 if (twin != null) {
                     isGoal = twin.isGoal();
                     if (isUnique(twin, previousSN)) {
                         sn = new SearchNode(twin, previousSN, moves);
                         pq.insert(sn);
-                        System.out.println("Manhattan: " + sn.board.manhattan());//todo test
                     }
 
                     if (isGoal) {
@@ -68,10 +66,14 @@ public class Solver {
             if (!isGoal) {
                 previousSN = pq.delMin();
                 solutions.add(previousSN.board);
+
+                System.out.println(" * * * * * \nH:" + previousSN.board.hamming() + " M:" + previousSN.board.manhattan()
+                        + "\n" + (previousSN.board.toString() + "\n * * * * * \n"));
+                System.out.println();
             }
         }
 
-        System.out.println("Result: \n" + solutions.get(solutions.size()-1).toString() + "\nmoves: " + moves());//todo test
+        System.out.println("Result: \n" + solutions.get(solutions.size() - 1).toString() + "\nmoves: " + moves());//todo test
 
     }
 

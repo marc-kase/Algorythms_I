@@ -82,9 +82,9 @@ public class Board {
         boolean left, right, up, dw;
         s = nextState();
         right = i + s[1] < n;
-        left = i + s[1] > -1;
+        left = i + s[1] >= 0;
         up = j + s[0] < n;
-        dw = j + s[0] > -1;
+        dw = j + s[0] >= 0;
 
         if (!(left && right && up && dw)) return null;
 

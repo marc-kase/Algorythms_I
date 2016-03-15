@@ -5,8 +5,8 @@ import java.nio.file.Paths;
 
 public class Client {
     public static void main(String[] args) {
-//        String filename = "puzzle2x2-06.txt";
-        String filename = "puzzle4x4-10.txt";
+        String filename = "puzzle2x2-05.txt";
+//        String filename = "puzzle4x4-49.txt";
 //        String filename = "test.txt";
         Path f = Paths.get(args[0], filename);
 
