@@ -8,78 +8,88 @@ public class Solver {
 
     private SearchNode first, solution = null;
     private int moves = 0;
-    private boolean isGoal = false;
-    private MinPQ<SearchNode> pq = new MinPQ<>();
+    private boolean isSolvable = false;
     private List<Board> solutions = new ArrayList<>();
 
     private static class SearchNode implements Comparable<SearchNode> {
         private Board board;
         private SearchNode previous;
         private int moves;
-        private int priority;
+        private int manhattan;
+        private int hamming;
 
         public SearchNode(Board board, SearchNode previous, int moves) {
             this.board = board;
             this.previous = previous;
             this.moves = moves;
-            priority = board.manhattan() + moves;
-
-            System.out.println(board.toString() + "H:" + board.hamming() + " M:" + board.manhattan() + "\n");//todo test
+            manhattan = board.manhattan();
+            hamming = board.hamming();
         }
 
         @Override
         public int compareTo(SearchNode o) {
             if (o == null) return 1;
-            return this.priority - o.priority;
+            int p = this.manhattan - o.manhattan;
+//            if (p == 0) p = this.hamming - o.hamming;
+
+//            int p = o.manhattan - this.manhattan;
+            if (p == 0) return o.hamming - this.hamming;
+            return p;
         }
     }
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        isGoal = false;
+        boolean isGoal = false;
         first = new SearchNode(initial, null, 0);
+        MinPQ<SearchNode> pq = new MinPQ<>();
         pq.insert(first);
 
-        SearchNode sn;
         SearchNode previousSN = pq.delMin();
 
         while (!isGoal) {
             moves++;
 
-            System.out.println("Moves : " + moves + " =====================================");//todo test
-            int k = 0;
-            do {
-                Board twin = previousSN.board.twin();
-                if (twin != null) {
-                    isGoal = twin.isGoal();
-                    if (isUnique(twin, previousSN)) {
-                        sn = new SearchNode(twin, previousSN, moves);
-                        pq.insert(sn);
-                    }
+            System.out.println("================ Moves : " + moves + " =================");//todo test
 
-                    if (isGoal) {
-                        solutions.add(twin);
-                        k = 3;
-                    }
+            Iterator<Board> it = previousSN.board.neighbors().iterator();
+            while (it.hasNext()) {
+                Board node = it.next();
+                if (isUnique(node, previousSN)) {
+                    pq.insert(new SearchNode(node, previousSN, moves));
+
+                    System.out.println(node.toString() + "H:" + node.hamming() + " M:" + node.manhattan() + "\n");//todo test
                 }
-            } while (k++ < 3);
-            if (!isGoal) {
-                previousSN = pq.delMin();
-                solutions.add(previousSN.board);
+            }
 
+            if (pq.size() != 0) {
+                previousSN = pq.delMin();
+            } else {
+                isSolvable = false;
+                isGoal = true;
+            }
+
+            if (previousSN.board.isGoal()) {
+                isGoal = true;
+                isSolvable = true;
+                solutions.add(previousSN.board);
+            } else {
+                solutions.add(previousSN.board);
                 System.out.println(" * * * * * \nH:" + previousSN.board.hamming() + " M:" + previousSN.board.manhattan()
                         + "\n" + (previousSN.board.toString() + "\n * * * * * \n"));
                 System.out.println();
             }
         }
 
-        System.out.println("Result: \n" + solutions.get(solutions.size() - 1).toString() + "\nmoves: " + moves());//todo test
+        if (isSolvable)
+            System.out.println("Result: \n" + solutions.get(solutions.size() - 1).toString() + "\nmoves: " + moves());//todo test
+        else System.out.println("Unsolvable");
 
     }
 
     // is the initial board solvable?
     public boolean isSolvable() {
-        return isGoal;
+        return isSolvable;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -103,15 +113,13 @@ public class Solver {
         if (board.equals(snode.board)) return false;
         if (board.equals(first.board)) return false;
 
-        SearchNode node = snode.previous;
-        if (node == null) return true;
-
-        while (node != null) {
-            Iterable<Board> it = node.board.neighbors();
+        SearchNode sn = snode;
+        while (sn.previous != null) {
+            sn = sn.previous;
+            Iterable<Board> it = sn.board.neighbors();
             for (Board n : it) {
                 if (board.equals(n)) return false;
             }
-            node = node.previous;
         }
         return true;
     }

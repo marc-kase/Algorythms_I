@@ -5,9 +5,10 @@ import java.nio.file.Paths;
 
 public class Client {
     public static void main(String[] args) {
-        String filename = "puzzle2x2-05.txt";
+//        String filename = "puzzle3x3-08.txt";
+        String filename = "puzzle3x3-10.txt";
 //        String filename = "puzzle4x4-49.txt";
-//        String filename = "test.txt";
+//        String filename = "puzzle04.txt";
         Path f = Paths.get(args[0], filename);
 
         // create initial board from file

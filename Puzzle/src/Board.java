@@ -67,7 +67,7 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int[] s;
+        int[] s = new int[2];
 
         int[] b = line2grid(findBlank());
         int i = b[1];
@@ -79,22 +79,21 @@ public class Board {
             twins[c[1]][c[0]] = blocks[c[1]][c[0]];
         }
 
-        boolean left, right, up, dw;
-        s = nextState();
-        right = i + s[1] < n;
-        left = i + s[1] >= 0;
-        up = j + s[0] < n;
-        dw = j + s[0] >= 0;
-
-        if (!(left && right && up && dw)) return null;
+        boolean left, right, up, dw, isInside = false;
+        while (!isInside) {
+            s = nextState();
+            right = i + s[1] < n;
+            left = i + s[1] >= 0;
+            up = j + s[0] < n;
+            dw = j + s[0] >= 0;
+            isInside = left && right && up && dw;
+        }
 
         int helper = twins[i][j];
         twins[i][j] = twins[i + s[1]][j + s[0]];
         twins[i + s[1]][j + s[0]] = helper;
 
-        Board t = new Board(twins);
-        neighbors.add(t);
-        return t;
+        return new Board(twins);
     }
 
     // does this board equal y?
@@ -111,6 +110,9 @@ public class Board {
         return new Iterable<Board>() {
             @Override
             public Iterator<Board> iterator() {
+                for (int i = 0; i < 4; i++) {
+                    neighbors.add(twin());
+                }
                 return neighbors.listIterator();
             }
         };
@@ -140,9 +142,6 @@ public class Board {
 
         int[] c;
         switch (state) {
-            case 1:
-                c = new int[]{0, -1};
-                break;
             case 2:
                 c = new int[]{1, 0};
                 break;
@@ -154,6 +153,9 @@ public class Board {
                 break;
             default:
                 c = new int[]{0, 0};
+                break;
+            case 1:
+                c = new int[]{0, -1};
                 break;
         }
         return c;
