@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Solver {
 
-    private SearchNode first, solution = null;
+    private SearchNode first;
     private int moves = 0;
     private boolean isSolvable = false;
     private List<Board> solutions = new ArrayList<>();
@@ -17,6 +17,7 @@ public class Solver {
         private int moves;
         private int manhattan;
         private int hamming;
+        private int priority;
 
         public SearchNode(Board board, SearchNode previous, int moves) {
             this.board = board;
@@ -24,6 +25,7 @@ public class Solver {
             this.moves = moves;
             manhattan = board.manhattan();
             hamming = board.hamming();
+            priority = manhattan + moves;
         }
 
         @Override
