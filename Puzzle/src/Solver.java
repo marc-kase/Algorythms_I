@@ -7,8 +7,8 @@ import java.util.List;
 public class Solver {
 
     private SearchNode first;
-    private int moves = 0;
     private boolean isSolvable = false;
+    private SearchNode solution = null;
     private List<Board> solutions = new ArrayList<>();
 
     private static class SearchNode implements Comparable<SearchNode> {
@@ -31,11 +31,11 @@ public class Solver {
         @Override
         public int compareTo(SearchNode o) {
             if (o == null) return 1;
-            int p = this.manhattan - o.manhattan;
-//            if (p == 0) p = this.hamming - o.hamming;
-
-//            int p = o.manhattan - this.manhattan;
+            int p = this.priority - o.priority;
             if (p == 0) return o.hamming - this.hamming;
+//            int p = this.manhattan - o.manhattan;
+//            if (p == 0) p = this.hamming - o.hamming;
+//            int p = o.manhattan - this.manhattan;
             return p;
         }
     }
@@ -50,19 +50,7 @@ public class Solver {
         SearchNode previousSN = pq.delMin();
 
         while (!isGoal) {
-            moves++;
-
-            System.out.println("================ Moves : " + moves + " =================");//todo test
-
-            Iterator<Board> it = previousSN.board.neighbors().iterator();
-            while (it.hasNext()) {
-                Board node = it.next();
-                if (isUnique(node, previousSN)) {
-                    pq.insert(new SearchNode(node, previousSN, moves));
-
-                    System.out.println(node.toString() + "H:" + node.hamming() + " M:" + node.manhattan() + "\n");//todo test
-                }
-            }
+            addNeighbours(pq, previousSN);
 
             if (pq.size() != 0) {
                 previousSN = pq.delMin();
@@ -75,18 +63,34 @@ public class Solver {
                 isGoal = true;
                 isSolvable = true;
                 solutions.add(previousSN.board);
+                solution = previousSN;
             } else {
+                isSolvable = false;
                 solutions.add(previousSN.board);
-                System.out.println(" * * * * * \nH:" + previousSN.board.hamming() + " M:" + previousSN.board.manhattan()
-                        + "\n" + (previousSN.board.toString() + "\n * * * * * \n"));
-                System.out.println();
+/*                System.out.println(" * * * * * \nH:" + previousSN.board.hamming() + " M:" + previousSN.board.manhattan()
+                        + " m: " + (previousSN.moves) + "\n" + (previousSN.board.toString() + "\n * * * * * \n"));
+                System.out.println();*/
             }
         }
 
-        if (isSolvable)
+/*        if (isSolvable) {
             System.out.println("Result: \n" + solutions.get(solutions.size() - 1).toString() + "\nmoves: " + moves());//todo test
-        else System.out.println("Unsolvable");
+        } else {
+            System.out.println("Unsolvable");
+        }*/
 
+    }
+
+    private void addNeighbours(MinPQ<SearchNode> pq, SearchNode previousSN) {
+        Iterator<Board> it = previousSN.board.neighbors().iterator();
+        while (it.hasNext()) {
+            Board node = it.next();
+            if (isUnique(node, previousSN)) {
+                pq.insert(new SearchNode(node, previousSN, previousSN.moves + 1));
+/*                    System.out.println(node.toString() + "H:" + node.hamming() + " M:" + node.manhattan() + " m: "
+                        + (previousSN.moves + 1) + "\n");//todo test*/
+            }
+        }
     }
 
     // is the initial board solvable?
@@ -94,9 +98,9 @@ public class Solver {
         return isSolvable;
     }
 
-    // min number of moves to solve initial board; -1 if unsolvable
+    // min number of circles to solve initial board; -1 if unsolvable
     public int moves() {
-        return moves;
+        return solution != null ? solution.moves : -1;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
@@ -111,7 +115,7 @@ public class Solver {
 
     private boolean isUnique(Board board, SearchNode snode) {
         if (snode == null) return true;
-        if (moves == 0) return true;
+        if (snode.moves == 0) return true;
         if (board.equals(snode.board)) return false;
         if (board.equals(first.board)) return false;
 

@@ -67,11 +67,29 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int[] s = new int[2];
-
         int[] b = line2grid(findBlank());
-        int i = b[1];
-        int j = b[0];
+
+        Board twin = null;
+        int dirs = 0;
+        while (twin == null && dirs++ < 4) {
+            twin = createTwin(b, nextState());
+        }
+
+        return twin;
+    }
+
+    private Board createTwin(int[] blankXY, int[] shiftXY) {
+
+        int i = blankXY[1];
+        int j = blankXY[0];
+
+        boolean right = i + shiftXY[1] < n;
+        boolean left = i + shiftXY[1] >= 0;
+        boolean up = j + shiftXY[0] < n;
+        boolean dw = j + shiftXY[0] >= 0;
+        boolean isInside = left && right && up && dw;
+
+        if (!isInside) return null;
 
         int[][] twins = new int[n][n];
         for (int k = 1; k < num + 1; k++) {
@@ -79,19 +97,9 @@ public class Board {
             twins[c[1]][c[0]] = blocks[c[1]][c[0]];
         }
 
-        boolean left, right, up, dw, isInside = false;
-        while (!isInside) {
-            s = nextState();
-            right = i + s[1] < n;
-            left = i + s[1] >= 0;
-            up = j + s[0] < n;
-            dw = j + s[0] >= 0;
-            isInside = left && right && up && dw;
-        }
-
         int helper = twins[i][j];
-        twins[i][j] = twins[i + s[1]][j + s[0]];
-        twins[i + s[1]][j + s[0]] = helper;
+        twins[i][j] = twins[i + shiftXY[1]][j + shiftXY[0]];
+        twins[i + shiftXY[1]][j + shiftXY[0]] = helper;
 
         return new Board(twins);
     }
@@ -110,8 +118,12 @@ public class Board {
         return new Iterable<Board>() {
             @Override
             public Iterator<Board> iterator() {
+                int[] b = line2grid(findBlank());
+
+                Board twin;
                 for (int i = 0; i < 4; i++) {
-                    neighbors.add(twin());
+                    twin = createTwin(b, nextState());
+                    if (twin != null) neighbors.add(twin);
                 }
                 return neighbors.listIterator();
             }
@@ -120,7 +132,7 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        String res = "";
+        String res = "M: " + manhattan() + " H: " + hamming() + "\n";
         int[] c;
         for (int i = 1; i < num + 1; i++) {
             c = line2grid(i);
