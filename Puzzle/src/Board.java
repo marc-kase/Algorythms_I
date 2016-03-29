@@ -10,6 +10,8 @@ public class Board {
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
+        if (blocks == null) throw new java.lang.NullPointerException();
+
         this.blocks = blocks;
         n = blocks.length;
         num = n * n;

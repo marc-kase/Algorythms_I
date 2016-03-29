@@ -42,6 +42,8 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
+        if (initial == null) throw new java.lang.NullPointerException();
+
         boolean isGoal = false;
         first = new SearchNode(initial, null, 0);
         MinPQ<SearchNode> pq = new MinPQ<>();
@@ -87,6 +89,9 @@ public class Solver {
             Board node = it.next();
             if (isUnique(node, previousSN)) {
                 pq.insert(new SearchNode(node, previousSN, previousSN.moves + 1));
+
+
+                if ((previousSN.moves + 1) % 5 == 0) System.out.println("Move: " + (previousSN.moves + 1));
 /*                    System.out.println(node.toString() + "H:" + node.hamming() + " M:" + node.manhattan() + " m: "
                         + (previousSN.moves + 1) + "\n");//todo test*/
             }

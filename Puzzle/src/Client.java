@@ -9,9 +9,9 @@ public class Client {
         StdOut.println("Started at " + d);
         long t0 = System.currentTimeMillis();
 
-        String filename = "puzzle3x3-08.txt";
-//        String filename = "puzzle3x3-25.txt";
-//        String filename = "puzzle4x4-31.txt";
+//        String filename = "puzzle3x3-08.txt";
+//        String filename = "puzzle3x3-20.txt";
+        String filename = "puzzle4x4-40.txt";
 //        String filename = "puzzle04.txt";
         Path f = Paths.get(args[0], filename);
 
